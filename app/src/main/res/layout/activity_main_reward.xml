@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
+
+    <EditText
+        android:id="@+id/LernzeitInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="36dp"
+        android:ems="10"
+        android:hint="Lernzeit in Stunden"
+        android:inputType="number" />
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/LernzeitInput"
+        android:layout_alignStart="@+id/LernzeitInput"
+        android:layout_marginTop="10dp"
+        android:onClick="onClickTin"
+        android:text="Prüfung Rang" />
+
+    <Button
+        android:id="@+id/b_case1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button"
+        android:onClick="onClickC1"
+        android:text="Grundschüler,Grundstein ,Nachteule, PerfekteWoche" />
+
+    <Button
+        android:id="@+id/b_case2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/b_case1"
+        android:onClick="onClickC2"
+        android:text="Abiturient, Grundstein ,PerfekteWoche, WochenednLerner" />
+
+    <Button
+        android:id="@+id/b_case3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/b_case2"
+        android:onClick="onClickC3"
+        android:text="Master, Grundstein ,PerfekteWoche, FrüherVogel" />
+
+    <Button
+        android:id="@+id/b_case4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/b_case3"
+        android:onClick="onClickC4"
+        android:text="Professor, Grundstein, PerfekteWoche" />
+
+
+</RelativeLayout>
