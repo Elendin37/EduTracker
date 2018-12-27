@@ -1,7 +1,11 @@
 package com.example.tomr.edutracker_1;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +30,8 @@ public class Timer extends AppCompatActivity {
     TextView timeview, fach;
     String fachname;
     Calendar currentStartTime, currentStopTime;
-
+    AudioManager am;
+    int oldRingerMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +39,10 @@ public class Timer extends AppCompatActivity {
         setContentView(R.layout.activity_timer);
         running = false;
         time = 0;
-        start = (Button) findViewById(R.id.b_starttimer);
-        stopp = (Button) findViewById(R.id.b_stopptimer);
-        timeview = (TextView) findViewById(R.id.timeview);
-        fach = (TextView) findViewById(R.id.fach);
+        start =  findViewById(R.id.b_starttimer);
+        stopp =  findViewById(R.id.b_stopptimer);
+        timeview =  findViewById(R.id.timeview);
+        fach =  findViewById(R.id.fach);
 
         currentStartTime = Calendar.getInstance();//.getTime();
 
@@ -55,12 +60,31 @@ public class Timer extends AppCompatActivity {
         Bundle bd = intent.getExtras();
         fachname = (String) bd.get("fach");
         fach.setText(fachname);
+
+
+        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        oldRingerMode = am.getRingerMode();                         //vorherigen RingMode auslesen
+
     }
 
 
     public void onClickTimer (View v) {
         switch (v.getId()) {
             case R.id.b_starttimer:
+
+
+                /* für Modus nicht stören -> Vibration ausreichend
+                NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                if (!notificationManager.isNotificationPolicyAccessGranted()) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                    startActivity(intent);
+                }*/
+
+                if (oldRingerMode != 0) {                                       //Wenn bereits silent, dann nicht umschalten
+                    am.setRingerMode(1);                                        //Auf Vibration schalten
+                }
+
                 if (!running) {
                     running = true;
                     initThread();
@@ -83,8 +107,9 @@ public class Timer extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
 
                         currentStopTime = Calendar.getInstance();
-
                         Toast.makeText(Timer.this, "Lernzeit beendet", Toast.LENGTH_SHORT).show();
+
+                        am.setRingerMode(oldRingerMode);    //Auf vorherige Einstellung schalten
 
                         Intent i = new Intent(getApplicationContext(), Speichern.class);
                         i.putExtra("fach",fachname);
