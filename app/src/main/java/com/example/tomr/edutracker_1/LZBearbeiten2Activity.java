@@ -51,9 +51,9 @@ public class LZBearbeiten2Activity extends AppCompatActivity {
 
         Intent Test = new Intent(this, MainActivity.class);
 
-        startActivityForResult(Test, REQUESTCODE);
+        //startActivityForResult(Test, REQUESTCODE);
 
-
+        startActivity(Test);
 
 
 

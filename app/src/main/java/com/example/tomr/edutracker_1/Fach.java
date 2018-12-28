@@ -14,7 +14,11 @@ public class Fach {
         istzeit=theistzeit;
     }
     public String toString(){
-        return "'\n'["+id+", "+title+", "+zielzeit+", "+istzeit+"]";
+/*        return "'\n'["+id+", "+title+", "+zielzeit+", "+istzeit+"]";
+      Von Christoph geändert, damit nach dem Namen gesucht werden kann, sollte jemand von euch
+      den kompletten String brauchen, dann bitte bei mir melden und ich überlege mir was.
+*/
+        return title;
     }
     public String getTitle(){
         return title;

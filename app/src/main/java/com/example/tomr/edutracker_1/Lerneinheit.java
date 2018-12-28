@@ -14,8 +14,14 @@ public class Lerneinheit {
     }
 
     public String toString(){
-        return "'\n'Lerneinheit=[" + id + ", " + fach + ", " + wochentag + ", " + start + ", " +
+/*        return "'\n'Lerneinheit=[" + id + ", " + fach + ", " + wochentag + ", " + start + ", " +
                 ende + ", " + pause + ", " + lerndauer + ", " + notizen + ", " + anhang +"]";
+      Von Christoph geändert, damit nach der ID gesucht werden kann, sollte jemand von euch
+      den kompletten String brauchen, dann bitte bei mir melden und ich überlege mir was.
+*/
+        String idnullen =String.format("%04d", id);
+        return idnullen+" - "+fach+": "+wochentag+", "+start+" - "+ende;
+
     }
 
     public int getId(){
