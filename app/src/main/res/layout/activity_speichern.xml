@@ -31,14 +31,14 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <EditText
-        android:id="@+id/notizen"
+        android:id="@+id/notiz"
         android:layout_width="331dp"
         android:layout_height="122dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="text"
         android:onClick="onClickSave"
         android:text="@string/notizen"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,27 +48,32 @@
 
     <Button
         android:id="@+id/anhang"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="211dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
         android:onClick="onClickSave"
         android:text="@string/addAnhang"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notizen" />
+        app:layout_constraintTop_toBottomOf="@+id/notiz" />
+
+    <ImageView
+        android:id="@+id/vorschau"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/filename"
+        app:layout_constraintTop_toBottomOf="@+id/notiz"
+        app:srcCompat="@drawable/blank" />
 
     <TextView
         android:id="@+id/filename"
-        android:layout_width="165dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="210dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
         android:text="@string/file"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/anhang" />
 

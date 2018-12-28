@@ -1,20 +1,34 @@
 package com.example.tomr.edutracker_1;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.hardware.Camera;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import static android.media.MediaRecorder.VideoSource.CAMERA;
 
 public class Speichern extends AppCompatActivity {
 
@@ -24,7 +38,9 @@ public class Speichern extends AppCompatActivity {
     Button addAnhang, speichern;
     TextView fach, lernzeit, filename;
     EditText notizen;
-
+    ImageView vorschauAnhang;
+    String IMAGE_DIRECTORY;
+    Uri file;
     //public MyDatabaseHelper(Context context, String name, CursorFactory factory, int version)
     MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
@@ -44,16 +60,19 @@ public class Speichern extends AppCompatActivity {
         // DATABASE_NAME = "LerneinheitenDB";
         //getApplicationContext().deleteDatabase("LerneinheitenDB");
 
-        fach = (TextView) findViewById(R.id.fach);
-        lernzeit = (TextView) findViewById(R.id.lerndauer);
-        notizen = (EditText) findViewById(R.id.notizen);
-        filename = (TextView) findViewById(R.id.filename);
 
+        IMAGE_DIRECTORY = "Interner Speicher/EduTracker";
 
-        speichern = (Button) findViewById(R.id.save);
-        addAnhang = (Button) findViewById(R.id.anhang);
+        fach = findViewById(R.id.fach);
+        lernzeit = findViewById(R.id.lerndauer);
+        notizen = findViewById(R.id.notiz);
+        filename = findViewById(R.id.filename);
+        vorschauAnhang =  findViewById(R.id.vorschau);
 
+        speichern = findViewById(R.id.save);
+        addAnhang = findViewById(R.id.anhang);
 
+        notizen.setTextColor(Color.GRAY);
         /*
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("Lernzeit speichern");
@@ -81,19 +100,18 @@ public class Speichern extends AppCompatActivity {
 
     public void onClickSave (View v) {
         switch (v.getId()) {
-            case R.id.notizen:
-                notizen.setText("");
+            case R.id.notiz:
+                notizen.setTextColor(Color.BLACK);
+                if(notizen.getText().toString().equals("Notizen hinzufügen")){
+                    notizen.setText("");}
+                break;
 
             case R.id.anhang:
-
-                Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivity(camera);
-
+                showPictureDialog();
                 break;
+
             case R.id.save:
-
                 notizen_string = notizen.getText().toString();
-
                 String wochentag = getWochentag(startzeit.get(Calendar.DAY_OF_WEEK));
 
                 //Millisekunden vom 1.1.1970
@@ -201,53 +219,124 @@ public class Speichern extends AppCompatActivity {
         return s;
     }
 
-    /*For filereading. Try later...
-    private void loadFileList() {
-        try {
-            mPath.mkdirs();
-        }
-        catch(SecurityException e) {
-            Log.e(TAG, "unable to write on the sd card " + e.toString());
-        }
-        if(mPath.exists()) {
-            FilenameFilter filter = new FilenameFilter() {
-
-                @Override
-                public boolean accept(File dir, String filename) {
-                    File sel = new File(dir, filename);
-                    return filename.contains(FTYPE) || sel.isDirectory();
-                }
-
-            };
-            mFileList = mPath.list(filter);
-        }
-        else {
-            mFileList= new String[0];
-        }
-    }
-
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog = null;
-        AlertDialog.Builder builder = new Builder(this);
-
-        switch(id) {
-            case DIALOG_LOAD_FILE:
-                builder.setTitle("Choose your file");
-                if(mFileList == null) {
-                    Log.e(TAG, "Showing file picker before loading the file list");
-                    dialog = builder.create();
-                    return dialog;
-                }
-                builder.setItems(mFileList, new DialogInterface.OnClickListener() {
+    private void showPictureDialog(){
+        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
+        pictureDialog.setTitle("Wähle eine Aktion aus");
+        String[] pictureDialogItems = {
+                "Auswahl eines Fotos aus der Galerie",
+                "Aufnehmen eines Fotos mit der Kamera" };
+        pictureDialog.setItems(pictureDialogItems,
+                new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mChosenFile = mFileList[which];
-                        //you can do stuff with the file here too
+                        switch (which) {
+                            case 0:
+                                choosePhotoFromGallery();
+                                break;
+                            case 1:
+                                takePhotoFromCamera();
+                                break;
+                        }
                     }
                 });
-                break;
-        }
-        dialog = builder.show();
-        return dialog;
+        pictureDialog.show();
     }
-     */
+
+    public void choosePhotoFromGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(galleryIntent, 3);
+    }
+
+    private void takePhotoFromCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, CAMERA);
+
+        /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        file = Uri.fromFile(getOutputMediaFile());
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
+
+        startActivityForResult(intent, 100);*/
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == this.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == 3) {//gallery
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
+                    String path = saveImage(bitmap);
+                    Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    vorschauAnhang.setImageBitmap(bitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        else if (requestCode == CAMERA) {//camera
+            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+            vorschauAnhang.setImageBitmap(thumbnail);
+            saveImage(thumbnail);
+            Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public String saveImage(Bitmap myBitmap) {
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        File wallpaperDirectory = new File(
+                Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY);
+        // have the object build the directory structure, if needed.
+        if (!wallpaperDirectory.exists()) {
+            wallpaperDirectory.mkdirs();
+        }
+
+        try {
+            File f = new File(wallpaperDirectory, Calendar.getInstance()
+                    .getTimeInMillis() + ".jpg");
+            f.createNewFile();
+            FileOutputStream fo = new FileOutputStream(f);
+            fo.write(bytes.toByteArray());
+            MediaScannerConnection.scanFile(this,
+                    new String[]{f.getPath()},
+                    new String[]{"image/jpeg"}, null);
+            fo.close();
+            Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
+
+            return f.getAbsolutePath();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return "";
+    }
+
+
+
+   /* private static File getOutputMediaFile(){
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "CameraDemo");
+
+        if (!mediaStorageDir.exists()){
+            if (!mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        return new File(mediaStorageDir.getPath() + File.separator +
+                "IMG_"+ timeStamp + ".jpg");
+    }*/
+
+
 }
