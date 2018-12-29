@@ -9,8 +9,6 @@ import android.widget.Toast;
 public class Einstellung_Uebersicht extends AppCompatActivity {
 
 
-    //MySQLiteHelper dbF =new MySQLiteHelper(this,null,null,0);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

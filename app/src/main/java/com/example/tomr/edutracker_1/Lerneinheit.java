@@ -2,14 +2,14 @@ package com.example.tomr.edutracker_1;
 
 public class Lerneinheit {
     private int id;
-    private String fach, wochentag, start, ende, pause, lerndauer, notizen, anhang;
+    private String fach, start, ende, pause, lerndauer, notizen, anhang;
 
     public Lerneinheit() {};
 
-    public Lerneinheit(String i_fach, String i_wochentag, String i_start,
+    public Lerneinheit(String i_fach, String i_start,
                        String i_ende, String i_pause, String i_lerndauer, String i_notizen, String i_anhang) {
         super();
-        fach = i_fach; wochentag=i_wochentag; start=i_start;
+        fach = i_fach; start=i_start;
         ende=i_ende; pause=i_pause; lerndauer=i_lerndauer; notizen=i_notizen; anhang=i_anhang;
     }
 
@@ -20,7 +20,7 @@ public class Lerneinheit {
       den kompletten String brauchen, dann bitte bei mir melden und ich überlege mir was.
 */
         String idnullen =String.format("%04d", id);
-        return idnullen+" - "+fach+": "+wochentag+", "+start+" - "+ende;
+        return idnullen+" - "+fach+": " +start+" - "+ende;
 
     }
 
@@ -29,9 +29,6 @@ public class Lerneinheit {
     }
     public String getFach(){
         return fach;
-    }
-    public String getWochentag(){
-        return wochentag;
     }
     public String getStart(){
         return start;
@@ -57,9 +54,6 @@ public class Lerneinheit {
     }
     public void setFach(String i_fach){
         fach = i_fach;
-    }
-    public void setWochentag(String i_wochentag){
-        wochentag = i_wochentag;
     }
     public void setStart(String i_startzeit){
         start = i_startzeit;

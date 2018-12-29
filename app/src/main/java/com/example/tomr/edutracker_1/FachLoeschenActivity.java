@@ -16,7 +16,7 @@ public class FachLoeschenActivity extends AppCompatActivity {
 
     ArrayAdapter adapter;
 
-    MySQLiteHelper dbF =new MySQLiteHelper(this,null,null,0);
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
 
     @Override
@@ -37,9 +37,9 @@ public class FachLoeschenActivity extends AppCompatActivity {
 
         lv = (ListView) findViewById(R.id.listview);
 
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, dbF.getAllFaecher());
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, db.getAllFaecher());
         lv.setAdapter(adapter);
-        dbF.close();
+        db.close();
     }
 
 
@@ -64,8 +64,8 @@ public class FachLoeschenActivity extends AppCompatActivity {
         if (pos>=0) {
             String Fach = lv.getItemAtPosition(pos).toString();
             adapter.notifyDataSetChanged();
-            int fachid = dbF.getFachname(Fach).getId();
-            dbF.deleteFach(dbF.getFach(fachid));
+            int fachid = db.getFachname(Fach).getId();
+            db.deleteFach(db.getFach(fachid));
             Toast.makeText(getApplicationContext(), Fach + " erfolgreich gelöscht!", Toast.LENGTH_SHORT).show();
             showFaecher();
         }

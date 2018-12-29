@@ -10,9 +10,8 @@ import android.widget.Toast;
 
 public class LZBearbeiten2Activity extends AppCompatActivity {
 
-    MyDatabaseHelper dbL = new MyDatabaseHelper(this, null, null, 0);
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
-    private static final int REQUESTCODE = 10;
 
     private TextView Lernzeit;
     private EditText NotizAlt;
@@ -30,10 +29,10 @@ public class LZBearbeiten2Activity extends AppCompatActivity {
         int LZid = Integer.parseInt(LZname.substring(0,4));
 
         NotizAlt =(EditText) findViewById(R.id.editTextNotiz);
-        NotizAlt.setText(dbL.getLerneinheit(LZid).getNotizen());
+        NotizAlt.setText(db.getLerneinheit(LZid).getNotizen());
 
         AnhangAlt =(EditText) findViewById(R.id.editTextAnhang);
-        AnhangAlt.setText(dbL.getLerneinheit(LZid).getAnhang());
+        AnhangAlt.setText(db.getLerneinheit(LZid).getAnhang());
     }
 
     public void onClick_b_Speichern(View view){
@@ -44,18 +43,14 @@ public class LZBearbeiten2Activity extends AppCompatActivity {
 
         String LZname = getIntent().getExtras().getString("LZ-Übergabe");
         int LZid = Integer.parseInt(LZname.substring(0,4));
-        dbL.updateFachEinstellungen(LZid, newNotiz, newAnhang);
+        db.updateFachEinstellungen(LZid, newNotiz, newAnhang);
 
 
         Toast.makeText(this, LZname+" erfolgreich geändert", Toast.LENGTH_SHORT).show();
 
         Intent Test = new Intent(this, MainActivity.class);
 
-        //startActivityForResult(Test, REQUESTCODE);
-
         startActivity(Test);
-
-
 
     }
 

@@ -12,15 +12,13 @@ import java.util.ArrayList;
 
 public class LZLoeschenActivity extends AppCompatActivity {
 
-    MyDatabaseHelper dbL = new MyDatabaseHelper(this, null, null, 0);
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
     ListView lv;
     Button deleteBtn;
 
     ArrayAdapter adapter;
     ArrayList data = new ArrayList();
-    //String[] Fächer = {"Mo 05.11.2018", "Di 06.11.2018", "Mi 07.11.2018", "Do 08.11.2018", "Fr 09.11.2018", "Sa 10.11.2018", "So 11.11.2018"};
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +26,6 @@ public class LZLoeschenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lzloeschen);
 
         showFaecher();
-
-
-
     }
 
     public void showFaecher(){
@@ -38,9 +33,9 @@ public class LZLoeschenActivity extends AppCompatActivity {
 
         lv = (ListView) findViewById(R.id.listview);
 
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, dbL.getAllLerneinheiten());
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, db.getAllLerneinheiten());
         lv.setAdapter(adapter);
-        dbL.close();
+        db.close();
     }
     public void onClick_b_LZLöschen(View view)
     {
@@ -54,7 +49,7 @@ public class LZLoeschenActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
 
 
-            dbL.deleteLerneinheit(dbL.getLerneinheit(LEid));
+            db.deleteLerneinheit(db.getLerneinheit(LEid));
             Toast.makeText(getApplicationContext(), Lerneinheit + " erfolgreich gelöscht!", Toast.LENGTH_SHORT).show();
             showFaecher();
         }

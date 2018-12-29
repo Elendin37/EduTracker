@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     ListView lv;
     String fachname;
     Float  istzeit, zielzeit;
-    private MySQLiteHelper db = new MySQLiteHelper(this, null, null, 0);
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
 
     @Override

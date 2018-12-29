@@ -114,7 +114,7 @@ public class Speichern extends AppCompatActivity {
                 //String gesamtdauer = calculateDifference(startzeit.getTime(), stoppzeit.getTime());;
                 String anhang ="ANHANG.PDF";
 
-                Lerneinheit unit = new Lerneinheit(fachname, wochentag, startzeit.getTime().toString(),stoppzeit.getTime().toString(),stringPausendauer,lerndauer,notizen_string,anhang);
+                Lerneinheit unit = new Lerneinheit(fachname, startzeit.getTime().toString(),stoppzeit.getTime().toString(),stringPausendauer,lerndauer,notizen_string,anhang);
                 db.addLerneinheit(unit);
 
                 //showLerneinheiten();

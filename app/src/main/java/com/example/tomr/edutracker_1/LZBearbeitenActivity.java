@@ -12,19 +12,15 @@ import android.widget.Toast;
 
 public class LZBearbeitenActivity extends AppCompatActivity {
 
-    MyDatabaseHelper dbL = new MyDatabaseHelper(this, null, null, 0);
-
-    private static final int REQUESTCODE = 3;
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lz_bearbeiten);
 
-        //String[] Lernzeiten = {"Mo 05.11.2018", "Di 06.11.2018", "Mi 07.11.2018", "Do 08.11.2018", "Fr 09.11.2018", "Sa 10.11.2018", "So 11.11.2018"};
 
-
-        ListAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, dbL.getAllLerneinheiten());
+        ListAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, db.getAllLerneinheiten());
         ListView listView = (ListView) findViewById(R.id.listlz);
         listView.setAdapter(adapter);
 
@@ -38,11 +34,9 @@ public class LZBearbeitenActivity extends AppCompatActivity {
                 Intent LZBearbeiten2 = new Intent(view.getContext(), LZBearbeiten2Activity.class);
                 LZBearbeiten2.putExtra("LZ-Übergabe", lz);
 
-                startActivityForResult(LZBearbeiten2, REQUESTCODE);
+                startActivity(LZBearbeiten2);
 
             }
         });
-
-
     }
 }

@@ -10,9 +10,9 @@ import android.widget.Toast;
 
 public class FachBearbeiten2Activity extends AppCompatActivity {
 
-    private static final int REQUESTCODE = 10;
 
-    MySQLiteHelper dbF =new MySQLiteHelper(this,null,null,0);
+
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
     private TextView fach;
     private EditText fachnamealt;
@@ -35,7 +35,7 @@ public class FachBearbeiten2Activity extends AppCompatActivity {
         fach.setText(Fachname+" bearbeiten:");
         fachnamealt.setText(Fachname);
 
-        Float fzielzeit = dbF.getFachname(Fachname).getZielzeit();
+        Float fzielzeit = db.getFachname(Fachname).getZielzeit();
         zielzeit.setText(fzielzeit.toString());
 
     }
@@ -47,23 +47,23 @@ public class FachBearbeiten2Activity extends AppCompatActivity {
 
         String Fachname = getIntent().getExtras().getString("Übergabe-de.cl.edutracker_einstellungen.Fach");
 
-        int fachID = dbF.getFachname(Fachname).getId();
+        int fachID = db.getFachname(Fachname).getId();
 
         String newName = fachnamealt.getText().toString();
 
         float newZielzeit = Float.valueOf(zielzeit.getText().toString());
 
-        float Istzeit = dbF.getFachname(Fachname).getIstzeit();
+        float Istzeit = db.getFachname(Fachname).getIstzeit();
 
 
-        dbF.updateFach(fachID, newName ,newZielzeit, Istzeit);
+        db.updateFach(fachID, newName ,newZielzeit, Istzeit);
 
 
         Toast.makeText(this, newName+" erfolgreich geändert", Toast.LENGTH_SHORT).show();
 
         Intent Test = new Intent(this, MainActivity.class);
 
-        startActivityForResult(Test, REQUESTCODE);
+        startActivity(Test);
 
     }
 

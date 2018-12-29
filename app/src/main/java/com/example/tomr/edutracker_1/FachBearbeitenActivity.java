@@ -12,22 +12,18 @@ import android.widget.Toast;
 
 public class FachBearbeitenActivity extends Activity {
 
-    private static final int REQUESTCODE = 3;
-
-    MySQLiteHelper dbF =new MySQLiteHelper(this,null,null,0);
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fach_bearbeiten);
 
-//        String[] fächer = {"Elektronik 1", "Elektronik 2", "Master-Projekt", "ADSE", "MNS", "TIM", "MICO"};
 
-
-        ListAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, dbF.getAllFaecher());
+        ListAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, db.getAllFaecher());
         ListView listView = (ListView) findViewById(R.id.listfaecher);
         listView.setAdapter(adapter);
-        dbF.close();
+        db.close();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -39,7 +35,7 @@ public class FachBearbeitenActivity extends Activity {
                 Intent FachBearbeiten2 = new Intent(view.getContext(), FachBearbeiten2Activity.class);
                 FachBearbeiten2.putExtra("Übergabe-de.cl.edutracker_einstellungen.Fach", fach);
 
-                startActivityForResult(FachBearbeiten2, REQUESTCODE);
+                startActivity(FachBearbeiten2);
 
             }
         });

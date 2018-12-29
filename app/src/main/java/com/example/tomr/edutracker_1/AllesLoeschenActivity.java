@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 public class AllesLoeschenActivity extends AppCompatActivity {
 
-    private static final int REQUESTCODE = 10;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +21,13 @@ public class AllesLoeschenActivity extends AppCompatActivity {
     {
         Toast.makeText(getApplicationContext(), "Alles gelöscht", Toast.LENGTH_SHORT).show();
         Intent zumHautpmenü = new Intent(this, MainActivity.class);
-        startActivityForResult(zumHautpmenü, REQUESTCODE);
+        startActivity(zumHautpmenü);
     }
 
     public void onClick_b_al_abbrechen(View view)
     {
         Toast.makeText(getApplicationContext(), "Abgebrochen", Toast.LENGTH_SHORT).show();
         Intent zumHautpmenü = new Intent(this, MainActivity.class);
-        startActivityForResult(zumHautpmenü, REQUESTCODE);
+        startActivity(zumHautpmenü);
     }
 }

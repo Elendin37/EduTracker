@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +16,9 @@ import java.util.List;
 public class MyDatabaseHelper extends  SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "LerneinheitenDB";
+    private static final String DATABASE_NAME = "EduTrackerDB";
     private static final String TABLE_LERNEINHEITEN = "lerneinheiten";
+    private static final String TABLE_FAECHER = "faecher";
 
     public MyDatabaseHelper(Context context, String name, CursorFactory factory, int version){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,7 +29,6 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         String CREATE_LERNEINHEIT_TABLE = "CREATE TABLE " + TABLE_LERNEINHEITEN + " ( "+
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "fach TEXT, " +
-                "wochentag TEXT, " +
                 "start TEXT, " +
                 "ende TEXT, " +
                 "pause TEXT, " +
@@ -36,30 +37,43 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
                 "anhang TEXT )";
 
         db.execSQL(CREATE_LERNEINHEIT_TABLE);
+
+        String CREATE_FAECHER_TABLE = "CREATE TABLE " + TABLE_FAECHER +  " ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "title TEXT, "+
+                "zielzeit float, "+
+                "istzeit float )";
+        // create faecher table
+        db.execSQL(CREATE_FAECHER_TABLE);
+
     }
 
     @Override
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion){
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LERNEINHEITEN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAECHER);
+        this.onCreate(db);
     }
+//------------------------------Funktionen Lerneinheiten----------------------------
+
+
 
     private static final String KEY_ID = "id";
     private static final String KEY_FACH = "fach";
-    private static final String KEY_WOCHENTAG = "wochentag";
     private static final String KEY_START = "start";
     private static final String KEY_ENDE = "ende";
     private static final String KEY_PAUSE = "pause";
     private static final String KEY_LERNDAUER = "lerndauer";
     private static final String KEY_NOTIZEN = "notizen";
     private static final String KEY_ANHANG = "anhang";
-    private static final String[] COLUMNS = {KEY_ID,KEY_FACH,KEY_WOCHENTAG,KEY_START,KEY_ENDE,KEY_PAUSE,KEY_LERNDAUER,KEY_NOTIZEN,KEY_ANHANG};
+    private static final String[] COLUMNS = {KEY_ID,KEY_FACH,KEY_START,KEY_ENDE,KEY_PAUSE,KEY_LERNDAUER,KEY_NOTIZEN,KEY_ANHANG};
+
 
 
     public void addLerneinheit(Lerneinheit unit){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues value = new ContentValues();
         value.put(KEY_FACH,unit.getFach());
-        value.put(KEY_WOCHENTAG, unit.getWochentag());
         value.put(KEY_START,unit.getStart());
         value.put(KEY_ENDE, unit.getEnde());
         value.put(KEY_PAUSE, unit.getPause());
@@ -81,13 +95,12 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         Lerneinheit unit = new Lerneinheit();
         unit.setId(Integer.parseInt(cursor.getString(0)));
         unit.setFach(cursor.getString(1));
-        unit.setWochentag(cursor.getString(2));
-        unit.setStart(cursor.getString(3));
-        unit.setEnde(cursor.getString(4));
-        unit.setPause(cursor.getString(5));
-        unit.setLerndauer(cursor.getString(6));
-        unit.setNotizen(cursor.getString(7));
-        unit.setAnhang(cursor.getString(8));
+        unit.setStart(cursor.getString(2));
+        unit.setEnde(cursor.getString(3));
+        unit.setPause(cursor.getString(4));
+        unit.setLerndauer(cursor.getString(5));
+        unit.setNotizen(cursor.getString(6));
+        unit.setAnhang(cursor.getString(7));
         db.close();
         return unit;
     }
@@ -109,13 +122,12 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         Lerneinheit unit =new Lerneinheit();
         unit.setId(Integer.parseInt(cursor.getString(0)));
         unit.setFach(cursor.getString(1));
-        unit.setWochentag(cursor.getString(2));
-        unit.setStart(cursor.getString(3));
-        unit.setEnde(cursor.getString(4));
-        unit.setPause(cursor.getString(5));
-        unit.setLerndauer(cursor.getString(6));
-        unit.setNotizen(cursor.getString(7));
-        unit.setAnhang(cursor.getString(8));
+        unit.setStart(cursor.getString(2));
+        unit.setEnde(cursor.getString(3));
+        unit.setPause(cursor.getString(4));
+        unit.setLerndauer(cursor.getString(5));
+        unit.setNotizen(cursor.getString(6));
+        unit.setAnhang(cursor.getString(7));
         db.close();
         return unit;
     }
@@ -131,13 +143,12 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
                 unit = new Lerneinheit();
                 unit.setId(Integer.parseInt(cursor.getString(0)));
                 unit.setFach(cursor.getString(1));
-                unit.setWochentag(cursor.getString(2));
-                unit.setStart(cursor.getString(3));
-                unit.setEnde(cursor.getString(4));
-                unit.setPause(cursor.getString(5));
-                unit.setLerndauer(cursor.getString(6));
-                unit.setNotizen(cursor.getString(7));
-                unit.setAnhang(cursor.getString(8));
+                unit.setStart(cursor.getString(2));
+                unit.setEnde(cursor.getString(3));
+                unit.setPause(cursor.getString(4));
+                unit.setLerndauer(cursor.getString(5));
+                unit.setNotizen(cursor.getString(6));
+                unit.setAnhang(cursor.getString(7));
                 lerneinheiten.add(unit);
             } while (cursor.moveToNext());
         }
@@ -148,7 +159,6 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues value = new ContentValues();
         value.put(KEY_FACH, unit.getFach());
-        value.put(KEY_WOCHENTAG, unit.getWochentag());
         value.put(KEY_START,unit.getStart());
         value.put(KEY_ENDE, unit.getEnde());
         value.put(KEY_PAUSE, unit.getPause());
@@ -184,6 +194,134 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         db.delete(TABLE_LERNEINHEITEN, KEY_ID+" = ?", new String[]{String.valueOf(unit.getId())});
     }
 
+//------------------------------Funktionen Fächer----------------------------
 
+
+    private static final String KEY_ID_FACH = "id";
+    public static final String KEY_TITLE = "title";
+    private static final String KEY_ZIELZEIT = "zielzeit";
+    private static final String KEY_ISTZEIT = "istzeit";
+    private static final String[] COLUMNS_FACH = {KEY_ID_FACH,KEY_TITLE,KEY_ZIELZEIT, KEY_ISTZEIT};
+
+
+
+    public void addFach(Fach fach){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues value=new ContentValues() ;
+        value.put(KEY_TITLE,fach.getTitle());
+        value.put(KEY_ZIELZEIT, fach.getZielzeit());
+        value.put(KEY_ISTZEIT, fach.getIstzeit());
+        db.insert(TABLE_FAECHER,null, value);
+        db.close();
+    }
+
+    public Fach getFach(int id){
+        SQLiteDatabase db=this.getReadableDatabase();
+
+        Cursor cursor =
+                db.query(TABLE_FAECHER, // select table
+                        COLUMNS_FACH, // select columns
+                        " id = ?", // select entry by primary key
+                        new String[] { String.valueOf(id) }, // selections args
+                        null, // group by
+                        null, // having
+                        null, // order by
+                        null); // limit
+
+        if (cursor != null)
+            cursor.moveToFirst();
+        Fach fach=new Fach();
+        fach.setIstzeit(cursor.getFloat(3));
+        fach.setZielzeit(cursor.getFloat(2));
+        fach.setTitle(cursor.getString(1));
+        fach.setId(Integer.parseInt(cursor.getString(0)));
+        db.close();
+        return fach;
+    }
+
+    public Fach getFachname(String fachname){
+        SQLiteDatabase db=this.getReadableDatabase();
+
+        Cursor cursor =db.query(MyDatabaseHelper.TABLE_FAECHER,COLUMNS_FACH,null,null,null,null,null);
+
+        boolean fachvorhanden = false;
+
+        while (cursor.moveToNext()){
+            //vergleich =cursor.getString(cursor.getColumnIndex(MySQLiteHelper.KEY_TITLE));
+            if(fachname.equals(cursor.getString(cursor.getColumnIndex(MyDatabaseHelper.KEY_TITLE)))){
+                fachvorhanden = true;
+                break;
+            }
+        }
+        //TODO: Christoph auf TRY-CATCH ändern
+        if(fachvorhanden) {
+            Fach fach = new Fach();
+            fach.setIstzeit(cursor.getFloat(3));
+            fach.setZielzeit(cursor.getFloat(2));
+            fach.setTitle(cursor.getString(1));
+            fach.setId(Integer.parseInt(cursor.getString(0)));
+            Log.d("getFachname", fach.toString());
+            db.close();
+            return fach;
+        }
+        else
+        {
+            Fach fach = new Fach();
+            fach.setIstzeit((float) 0.0);
+            fach.setZielzeit((float) 0.0);
+            fach.setTitle("ERROR");
+            fach.setId(9999);
+            db.close();
+            return fach;
+        }
+
+    }
+
+
+    public List<Fach> getAllFaecher() {
+
+        List<Fach> faecher = new LinkedList<Fach>();
+        String query = "SELECT  * FROM " + TABLE_FAECHER;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        Fach fach = null;
+        if (cursor.moveToFirst()) {
+            do {
+                fach=new Fach();
+                fach.setIstzeit(cursor.getFloat(3));
+                fach.setZielzeit(cursor.getFloat(2));
+                fach.setTitle(cursor.getString(1));
+                fach.setId(Integer.parseInt(cursor.getString(0)));
+
+                faecher.add(fach);
+            } while (cursor.moveToNext());
+        }
+        return faecher;
+    }
+
+    public int updateFach(int id, String newTitel, float newZielzeit, float newIstzeit){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String selection = KEY_ID_FACH+" = ?";
+        String[] selectionArgs =  { String.valueOf(id) };
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_TITLE, newTitel);
+        contentValues.put(KEY_ZIELZEIT, newZielzeit);
+        contentValues.put(KEY_ISTZEIT, newIstzeit);
+
+        int i = db.update(TABLE_FAECHER, contentValues, selection, selectionArgs);
+
+        db.close();
+        return i;
+    }
+
+    public void deleteFach(Fach fach){
+        String number=String.valueOf(fach.getId());
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_FAECHER,KEY_ID_FACH+" = ?", new String[] { String.valueOf(fach.getId()) });
+    }
 
 }
+

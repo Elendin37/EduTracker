@@ -25,7 +25,7 @@ public class create_lesson extends AppCompatActivity {
     private String donemessage = "Eingabe erfolgreich.";
     private int duration = Toast.LENGTH_SHORT;
 
-    MySQLiteHelper db =new MySQLiteHelper(this,null,null,0);
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
