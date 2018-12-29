@@ -21,7 +21,7 @@
     <string name="reset">Reset</string>
     <string name="time">%02d:%02d:%02d</string>
     <string name="timeformat">hh:mm:ss</string>
-    <string name="notizen">Notizen</string>
+    <string name="notizen">Notizen hinzufügen</string>
     <string name="addAnhang">Anhang hinzufügen</string>
     <string name="file">Dateiname</string>
     <string name="save">Speichern und Beenden</string>
