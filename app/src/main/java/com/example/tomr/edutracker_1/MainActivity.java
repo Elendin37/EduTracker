@@ -147,6 +147,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_lerneinheiten) {
 
         } else if (id == R.id.nav_statistik) {
+            Intent statistik = new Intent(getApplicationContext(),Statistik_Auswahl.class);
+            startActivity(statistik);
 
         } else if (id == R.id.nav_errungenschaften) {
             Intent goals = new Intent(getApplicationContext(),MainActivityReward.class);
