@@ -1,9 +1,12 @@
 package com.example.tomr.edutracker_1;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -12,7 +15,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Statistik_Auswahl extends AppCompatActivity {
 
@@ -20,12 +26,15 @@ public class Statistik_Auswahl extends AppCompatActivity {
 
     ListView listview;
     ListAdapter adapter;
+    ArrayList<String> selectedItems=new ArrayList<>();
 
+    
     TextView tvStart, tvEnd;
     Button BtStart, BtEnd;
 
     DatePickerDialog dpd;
 
+    String startdatum, enddatum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +42,35 @@ public class Statistik_Auswahl extends AppCompatActivity {
         setContentView(R.layout.activity_statistik_auswahl);
 
 //Auswahl der Fächer
+
         listview = (ListView) findViewById(R.id.lv_faecher);
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, db.getAllFaecher());
-        listview.setAdapter(adapter);
+
+        List<Fach> faecher = new LinkedList<Fach>();
+        faecher=db.getAllFaecher();
+
+        Fach fach = null;
+        fach=new Fach();
+        fach.setTitle("Alle Fächer");
+
+        faecher.add(0,fach);
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, faecher);
+                listview.setAdapter(adapter);
         db.close();
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String ausgewählteFächer = ((TextView)view).getText().toString();
+                if(selectedItems.contains(ausgewählteFächer)){
+                    selectedItems.remove(ausgewählteFächer);
+                }
+                else
+                {
+                    selectedItems.add(ausgewählteFächer);
+                }
+            }
+        });
+
 
 
 //Startdatum über Kalenderfenster auswählen
@@ -55,7 +89,8 @@ public class Statistik_Auswahl extends AppCompatActivity {
                 dpd = new DatePickerDialog(Statistik_Auswahl.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        tvStart.setText(String.format("%02d", day)+"."+String.format("%02d", (month+1))+"."+year);
+                        startdatum = String.format("%02d", day)+"."+String.format("%02d", (month+1))+"."+year;
+                        tvStart.setText(startdatum);
                     }
                 }, mYear, mMonth, mDay);
                 dpd.show();
@@ -78,7 +113,8 @@ public class Statistik_Auswahl extends AppCompatActivity {
                 dpd = new DatePickerDialog(Statistik_Auswahl.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        tvEnd.setText(String.format("%02d", day)+"."+String.format("%02d", (month+1))+"."+year);
+                        enddatum = String.format("%02d", day)+"."+String.format("%02d", (month+1))+"."+year;
+                        tvEnd.setText(enddatum);
                     }
                 }, mYear, mMonth, mDay);
                 dpd.show();
@@ -86,6 +122,25 @@ public class Statistik_Auswahl extends AppCompatActivity {
         });
     }
 
+    public void onClick_b_StatistikAnzeigen(View view)
+    {
+
+
+
+        Toast.makeText(this, "Button -Statistik anzeigen- gedrückt", Toast.LENGTH_SHORT).show();
+
+       String Fächer="";
+       for(String item:selectedItems){
+           Fächer+=item+"\n";
+       }
+       //Toast.makeText(this, Fächer, Toast.LENGTH_SHORT).show();
+
+        Intent StatistikAnzeigen = new Intent(this, Statistik_Anzeige.class);
+        StatistikAnzeigen.putExtra("ÜbergabeStartdatum", startdatum);
+        StatistikAnzeigen.putExtra("ÜbergabeEnddatum", enddatum);
+        StatistikAnzeigen.putExtra("ÜbergabeFächer", Fächer);
+        startActivity(StatistikAnzeigen);
+    }
 
 
 }

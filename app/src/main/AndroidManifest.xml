@@ -37,7 +37,8 @@
         <activity android:name=".LZLoeschenActivity" />
         <activity android:name=".MainActivityReward" />
         <activity android:name=".ShowActivityRang" />
-        <activity android:name=".Statistik_Auswahl"></activity>
+        <activity android:name=".Statistik_Auswahl" />
+        <activity android:name=".Statistik_Anzeige"></activity>
     </application>
 
 </manifest>
