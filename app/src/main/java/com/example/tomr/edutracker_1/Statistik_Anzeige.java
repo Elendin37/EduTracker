@@ -1,6 +1,7 @@
 package com.example.tomr.edutracker_1;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -27,15 +28,27 @@ public class Statistik_Anzeige extends AppCompatActivity {
         String Startdatum = getIntent().getExtras().getString("ÜbergabeStartdatum");
         String Enddatum = getIntent().getExtras().getString("ÜbergabeEnddatum");
 
-        int fachid = db.getFachname("TIM").getId();
-
-        String gesamtlernzeitfach = db.getFach(fachid).getIstzeit().toString();
 
         Integer anzahlfächer = FächerList.size();
+        String fachdaten ="";
+        String ausgabe = "";
 
-        tvTest.setText(anzahlfächer.toString()+"\n"+FächerList+"\n"+Startdatum+"\n"+Enddatum+"\n"+gesamtlernzeitfach);
+
+        for (int i = 0; i<anzahlfächer; i++ ){
+
+            //ausgabe = ausgabe + "\n" +FächerList.get(i);
+
+            ausgabe =ausgabe + "\n" + FächerList.get(i)+ ": "+ db.getFachdata(FächerList.get(i));
+        }
+
+
+        tvTest.setText(anzahlfächer.toString()+"\n"+ausgabe+"\n"+Startdatum+"\n"+Enddatum+"\n");
 
 
 
     }
+
+
+
+
 }

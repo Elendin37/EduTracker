@@ -9,8 +9,17 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
+import java.util.regex.Pattern;
+
+import static java.sql.Time.valueOf;
 
 
 public class MyDatabaseHelper extends  SQLiteOpenHelper {
@@ -192,6 +201,46 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         String number = String.valueOf(unit.getId());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_LERNEINHEITEN, KEY_ID+" = ?", new String[]{String.valueOf(unit.getId())});
+    }
+
+    public String getFachdata(String fachtitel){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String Gesamtzeit="";
+        String data="";
+
+        long totalsec=0;
+        int gh=0;
+        int gmin=0;
+        int gsec=0;
+        int datah=0;
+        int datamin=0;
+        int datasec=0;
+
+        Cursor cursor =db.query(MyDatabaseHelper.TABLE_LERNEINHEITEN,COLUMNS,null,null,null,null,null);
+
+        while (cursor.moveToNext()){
+            if(fachtitel.equals(cursor.getString(cursor.getColumnIndex(MyDatabaseHelper.KEY_FACH)))) {
+                data = cursor.getString(5);
+
+                String[] time = data.split(Pattern.quote(":"));
+                datah=Integer.parseInt(time[0]);
+                datamin=Integer.parseInt(time[1]);
+                datasec=Integer.parseInt(time[2]);
+
+                gh = gh + datah;
+                gmin = gmin + datamin;
+                gsec = gsec + datasec;
+            }
+
+
+        }
+
+        totalsec = ((gh * 60) + gmin) * 60 + gsec;
+        Gesamtzeit = (totalsec/3600)+":"+(((totalsec)/60)%60)+":"+(totalsec%60);
+
+
+        return Gesamtzeit;
     }
 
 
