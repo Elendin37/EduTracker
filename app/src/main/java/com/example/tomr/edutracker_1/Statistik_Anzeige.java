@@ -1,13 +1,18 @@
 package com.example.tomr.edutracker_1;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class Statistik_Anzeige extends AppCompatActivity {
 
-    TextView tvTest;
+    MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
+    TextView tvTest;
+    ArrayList<String> FächerList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,10 +21,21 @@ public class Statistik_Anzeige extends AppCompatActivity {
 
         tvTest = (TextView)findViewById(R.id.tv_test);
 
-        String Fächer = getIntent().getExtras().getString("ÜbergabeFächer");
+
+        FächerList = getIntent().getStringArrayListExtra("ÜbergabeFächer");
+        //String Fächer = getIntent().getExtras().getString("ÜbergabeFächer");
         String Startdatum = getIntent().getExtras().getString("ÜbergabeStartdatum");
         String Enddatum = getIntent().getExtras().getString("ÜbergabeEnddatum");
 
-        tvTest.setText(Fächer+Startdatum+"\n"+Enddatum);
+        int fachid = db.getFachname("TIM").getId();
+
+        String gesamtlernzeitfach = db.getFach(fachid).getIstzeit().toString();
+
+        Integer anzahlfächer = FächerList.size();
+
+        tvTest.setText(anzahlfächer.toString()+"\n"+FächerList+"\n"+Startdatum+"\n"+Enddatum+"\n"+gesamtlernzeitfach);
+
+
+
     }
 }

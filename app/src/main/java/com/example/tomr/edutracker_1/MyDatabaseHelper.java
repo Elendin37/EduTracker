@@ -194,6 +194,8 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         db.delete(TABLE_LERNEINHEITEN, KEY_ID+" = ?", new String[]{String.valueOf(unit.getId())});
     }
 
+
+
 //------------------------------Funktionen Fächer----------------------------
 
 

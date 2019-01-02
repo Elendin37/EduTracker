@@ -129,16 +129,18 @@ public class Statistik_Auswahl extends AppCompatActivity {
 
         Toast.makeText(this, "Button -Statistik anzeigen- gedrückt", Toast.LENGTH_SHORT).show();
 
-       String Fächer="";
+       String Fächer= "";
+/*
        for(String item:selectedItems){
            Fächer+=item+"\n";
        }
-       //Toast.makeText(this, Fächer, Toast.LENGTH_SHORT).show();
+*/
+        //Toast.makeText(this, Fächer, Toast.LENGTH_SHORT).show();
 
         Intent StatistikAnzeigen = new Intent(this, Statistik_Anzeige.class);
         StatistikAnzeigen.putExtra("ÜbergabeStartdatum", startdatum);
         StatistikAnzeigen.putExtra("ÜbergabeEnddatum", enddatum);
-        StatistikAnzeigen.putExtra("ÜbergabeFächer", Fächer);
+        StatistikAnzeigen.putExtra("ÜbergabeFächer", selectedItems);
         startActivity(StatistikAnzeigen);
     }
 
