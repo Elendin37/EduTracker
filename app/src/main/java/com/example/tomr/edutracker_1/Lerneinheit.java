@@ -20,7 +20,9 @@ public class Lerneinheit {
       den kompletten String brauchen, dann bitte bei mir melden und ich überlege mir was.
 */
         String idnullen =String.format("%04d", id);
-        return idnullen+" - "+fach+": " +start+" - "+ende;
+        String startShort = start.substring(0,19);
+        String endeShort = ende.substring(0,19);
+        return idnullen+" - "+fach+": " +startShort+" - "+ endeShort + " - " + notizen + " - " + anhang;
 
     }
 

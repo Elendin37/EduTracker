@@ -41,6 +41,7 @@
         android:inputType="text"
         android:onClick="onClickSave"
         android:text="@string/notizen"
+        android:imeOptions="actionDone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"

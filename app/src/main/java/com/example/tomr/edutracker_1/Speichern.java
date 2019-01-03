@@ -1,7 +1,10 @@
 package com.example.tomr.edutracker_1;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
@@ -9,10 +12,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,21 +32,23 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static android.media.MediaRecorder.VideoSource.CAMERA;
 
-public class Speichern extends AppCompatActivity {
+public class Speichern extends AppCompatActivity  {
 
-    String fachname, lerndauer,notizen_string;
+    String fachname, lerndauer, notizen_string, IMAGE_DIRECTORY,currentPhotoPath, pathGallery;
     long lerndauerInMs;
     Calendar startzeit, stoppzeit;
     Button addAnhang, speichern;
     TextView fach, lernzeit, filename;
     EditText notizen;
     ImageView vorschauAnhang;
-    String IMAGE_DIRECTORY;
+    static final int REQUEST_PICTURE_CAPTURE = 1;
     Uri file;
+    File f;
     //public MyDatabaseHelper(Context context, String name, CursorFactory factory, int version)
     MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
@@ -61,7 +69,7 @@ public class Speichern extends AppCompatActivity {
         //getApplicationContext().deleteDatabase("LerneinheitenDB");
 
 
-        IMAGE_DIRECTORY = "Interner Speicher/EduTracker";
+        IMAGE_DIRECTORY = "Interner Speicher/Pictures/EduTracker";
 
         fach = findViewById(R.id.fach);
         lernzeit = findViewById(R.id.lerndauer);
@@ -102,24 +110,25 @@ public class Speichern extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.notiz:
                 notizen.setTextColor(Color.BLACK);
-                if(notizen.getText().toString().equals("Notizen hinzufügen")){
-                    notizen.setText("");}
+                if (notizen.getText().toString().equals("Notizen hinzufügen")) {
+                    notizen.setText("");
+                }
                 break;
-
             case R.id.anhang:
                 showPictureDialog();
+                filename.setText(currentPhotoPath);
                 break;
 
             case R.id.save:
                 notizen_string = notizen.getText().toString();
-                String wochentag = getWochentag(startzeit.get(Calendar.DAY_OF_WEEK));
+                //String wochentag = getWochentag(startzeit.get(Calendar.DAY_OF_WEEK));
 
                 //Millisekunden vom 1.1.1970
-                long millisFrom1970_start =startzeit.getTime().getTime();
-                long millisFrom1970_stop  =stoppzeit.getTime().getTime();
+                long millisFrom1970_start = startzeit.getTime().getTime();
+                long millisFrom1970_stop = stoppzeit.getTime().getTime();
 
                 //Differenz zwischen Start und Stopp der Stoppuhr
-                long different =  millisFrom1970_stop - millisFrom1970_start;
+                long different = millisFrom1970_stop - millisFrom1970_start;
 
                 //Pausendauer ist die insgesamt vergangene Zeit abzüglich der getrackten Zeit
                 long pausendauer = different - lerndauerInMs;
@@ -130,9 +139,9 @@ public class Speichern extends AppCompatActivity {
                 String stringPausendauer = TimeConverter(pausendauer);
 
                 //String gesamtdauer = calculateDifference(startzeit.getTime(), stoppzeit.getTime());;
-                String anhang ="ANHANG.PDF";
+                String anhang = currentPhotoPath;
 
-                Lerneinheit unit = new Lerneinheit(fachname, startzeit.getTime().toString(),stoppzeit.getTime().toString(),stringPausendauer,lerndauer,notizen_string,anhang);
+                Lerneinheit unit = new Lerneinheit(fachname, startzeit.getTime().toString(), stoppzeit.getTime().toString(), stringPausendauer, lerndauer, notizen_string, anhang);
                 db.addLerneinheit(unit);
 
                 //showLerneinheiten();
@@ -140,53 +149,51 @@ public class Speichern extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Eintrag wurde gespeichert", Toast.LENGTH_LONG).show();
 
                 // Back to MainActivity
-                Intent i=new Intent(this, MainActivity.class);
+                Intent i = new Intent(this, MainActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 //finish();
                 break;
-            }
+
+                }
         }
 
-
-    /*public void showLerneinheiten(){
+        /*
+    //Lerneinheiten anzeigen
+    public void showLerneinheiten(){
         List<Lerneinheit> units = new LinkedList<Lerneinheit>();
         units = db.getAllLerneinheiten();
         String text = units.toString();
         testfeld.setText(text.toCharArray(),0,text.length());
     }*/
 
+    /*
+    //Wochentage zurückgeben
     public String getWochentag(int day) {
         String s;
         switch (day) {
-            case 1:
-                s = "Sonntag";
-                break;
-            case 2:
-                s = "Montag";
-                break;
-            case 3:
-                s = "Dienstag";
-                break;
-            case 4:
-                s = "Mittwoch";
-                break;
-            case 5:
-                s = "Donnerstag";
-                break;
-            case 6:
-                s = "Freitag";
-                break;
-            case 7:
-                s = "Samstag";
-                break;
-            default:
-                s= "Kein Wochentag";
-                break;
-        }
+            case 1: s = "Sonntag";       break;
+            case 2: s = "Montag";        break;
+            case 3: s = "Dienstag";      break;
+            case 4: s = "Mittwoch";      break;
+            case 5: s = "Donnerstag";    break;
+            case 6: s = "Freitag";       break;
+            case 7: s = "Samstag";       break;
+            default:s= "Kein Wochentag"; break;}
         return  s;
-    }
+    }*/
 
+/*
+    public static boolean isIntentAvailable(Context context, String action) {
+        final PackageManager packageManager = context.getPackageManager();
+        final Intent intent = new Intent(action);
+        List<ResolveInfo> list =
+                packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
+*/
+
+    //Zeit von Millisekunden in hh:mm:ss ausgeben
     public String TimeConverter(long millis){
             return String.format("%02d:%02d:%02d",
                     TimeUnit.MILLISECONDS.toHours(millis),
@@ -194,7 +201,7 @@ public class Speichern extends AppCompatActivity {
                     TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
     }
 
-
+    //Um die Zeitspanne zwischen Startzeit und Endzeit im Format dd:HH:mm:SS zu berechnen
     public String calculateDifference(Date startDate, Date endDate) {
         //milliseconds
         long different = endDate.getTime() - startDate.getTime();
@@ -219,7 +226,8 @@ public class Speichern extends AppCompatActivity {
         return s;
     }
 
-    private void showPictureDialog(){
+    //Dialog um bereits bestehendes Foto auszuwählen oder neues Foto aufzunehmen
+    private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Wähle eine Aktion aus");
         String[] pictureDialogItems = {
@@ -242,6 +250,7 @@ public class Speichern extends AppCompatActivity {
         pictureDialog.show();
     }
 
+    //Bereits bestehendes Foto auswählen
     public void choosePhotoFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -249,22 +258,50 @@ public class Speichern extends AppCompatActivity {
         startActivityForResult(galleryIntent, 3);
     }
 
+    //Neues Foto aufnehmen
     private void takePhotoFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAMERA);
+        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePicture.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
+        if (takePicture.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePicture, REQUEST_PICTURE_CAPTURE);
 
-        /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        file = Uri.fromFile(getOutputMediaFile());
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
+            //Abfangen der IOException
+            f = null;
+            try {
+                f = createImageFile();
+            } catch (IOException ie) {
+                Toast.makeText(this,
+                        "Photo file can't be created, please try again",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (f != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "com.example.tomr.edutracker_1",f);
+                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePicture, REQUEST_PICTURE_CAPTURE);                        //REQUEST_PICTURE_CAPTURE = 1
+            }
+        }
+    }
 
-        startActivityForResult(intent, 100);*/
+    //Um eine Datei zu erzeugen, in die das aufgenommene Foto gespeichert wird
+    private File createImageFile() throws IOException{
+        //Speicherort
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),IMAGE_DIRECTORY);
+        File directory = new File(IMAGE_DIRECTORY);
+        //Dateiname
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "EduTracker_" + timeStamp + "_";
+        //Datei
 
+        File image = File.createTempFile(imageFileName, ".jpg", null );
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode == this.RESULT_CANCELED) {
             return;
         }
@@ -274,6 +311,7 @@ public class Speichern extends AppCompatActivity {
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     String path = saveImage(bitmap);
+                    pathGallery = contentURI.getPath();
                     Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
                     vorschauAnhang.setImageBitmap(bitmap);
 
@@ -287,24 +325,24 @@ public class Speichern extends AppCompatActivity {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             vorschauAnhang.setImageBitmap(thumbnail);
             saveImage(thumbnail);
-            Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     public String saveImage(Bitmap myBitmap) {
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-        File wallpaperDirectory = new File(
-                Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY);
+        //File wallpaperDirectory = new File(Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY);
+        File wallpaperDirectory = new File(IMAGE_DIRECTORY);
         // have the object build the directory structure, if needed.
         if (!wallpaperDirectory.exists()) {
             wallpaperDirectory.mkdirs();
         }
 
         try {
-            File f = new File(wallpaperDirectory, Calendar.getInstance()
-                    .getTimeInMillis() + ".jpg");
+            //File f = new File(wallpaperDirectory, Calendar.getInstance()
+            //        .getTimeInMillis() + ".jpg");
             f.createNewFile();
             FileOutputStream fo = new FileOutputStream(f);
             fo.write(bytes.toByteArray());
@@ -316,7 +354,7 @@ public class Speichern extends AppCompatActivity {
 
             return f.getAbsolutePath();
         } catch (IOException e1) {
-            e1.printStackTrace();
+            Toast.makeText(this, "Save Image failed!", Toast.LENGTH_SHORT).show();
         }
         return "";
     }
