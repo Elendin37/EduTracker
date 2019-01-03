@@ -145,7 +145,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_tracking) {
             // Handle the camera action
         } else if (id == R.id.nav_lerneinheiten) {
-
+            Intent lerneinheiten = new Intent(getApplicationContext(), LerneinheitAnzeigen.class);
+            startActivity(lerneinheiten);
         } else if (id == R.id.nav_statistik) {
             Intent statistik = new Intent(getApplicationContext(),Statistik_Auswahl.class);
             startActivity(statistik);

@@ -38,7 +38,8 @@
         <activity android:name=".MainActivityReward" />
         <activity android:name=".ShowActivityRang" />
         <activity android:name=".Statistik_Auswahl" />
-        <activity android:name=".Statistik_Anzeige"></activity>
+        <activity android:name=".Statistik_Anzeige" />
+        <activity android:name=".LerneinheitAnzeigen"></activity>
     </application>
 
 </manifest>

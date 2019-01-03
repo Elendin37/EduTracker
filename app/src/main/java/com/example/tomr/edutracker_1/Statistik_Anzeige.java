@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class Statistik_Anzeige extends AppCompatActivity {
@@ -24,7 +25,6 @@ public class Statistik_Anzeige extends AppCompatActivity {
 
 
         FächerList = getIntent().getStringArrayListExtra("ÜbergabeFächer");
-        //String Fächer = getIntent().getExtras().getString("ÜbergabeFächer");
         String Startdatum = getIntent().getExtras().getString("ÜbergabeStartdatum");
         String Enddatum = getIntent().getExtras().getString("ÜbergabeEnddatum");
 
@@ -38,7 +38,7 @@ public class Statistik_Anzeige extends AppCompatActivity {
 
             //ausgabe = ausgabe + "\n" +FächerList.get(i);
 
-            ausgabe =ausgabe + "\n" + FächerList.get(i)+ ": "+ db.getFachdata(FächerList.get(i));
+            ausgabe =ausgabe + "\n" + FächerList.get(i)+ ": "+ db.getFachdata(FächerList.get(i), Startdatum, Enddatum);
         }
 
 
