@@ -89,6 +89,7 @@ public class Statistik_Auswahl extends AppCompatActivity {
                 dpd = new DatePickerDialog(Statistik_Auswahl.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
+
                         startdatum = String.format("%02d", day)+"."+String.format("%02d", (month+1))+"."+year;
                         tvStart.setText(startdatum);
                     }
@@ -124,10 +125,7 @@ public class Statistik_Auswahl extends AppCompatActivity {
 
     public void onClick_b_StatistikAnzeigen(View view)
     {
-
-
-
-        Toast.makeText(this, "Button -Statistik anzeigen- gedrückt", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Button -Statistik anzeigen- gedrückt", Toast.LENGTH_SHORT).show();
 
         Intent StatistikAnzeigen = new Intent(this, Statistik_Anzeige.class);
         StatistikAnzeigen.putExtra("ÜbergabeStartdatum", startdatum);

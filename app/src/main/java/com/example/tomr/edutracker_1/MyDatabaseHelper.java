@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -203,7 +204,7 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         db.delete(TABLE_LERNEINHEITEN, KEY_ID+" = ?", new String[]{String.valueOf(unit.getId())});
     }
 
-    public String getFachdata(String fachtitel){
+    public String getFachdata(String fachtitel, String Startdatum, String Enddatum) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         String Gesamtzeit="";
@@ -217,27 +218,72 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         int datamin=0;
         int datasec=0;
 
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+
+        Date selectStartdate = null;
+        Date selectEnddate = null;
+        Date DateLerneinheit=null;
+
+        try {
+            selectStartdate = sdf.parse(Startdatum);
+            selectEnddate = sdf.parse(Enddatum);
+
+        }catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        String DatumLerneinheit;
+
         Cursor cursor =db.query(MyDatabaseHelper.TABLE_LERNEINHEITEN,COLUMNS,null,null,null,null,null);
 
         while (cursor.moveToNext()){
             if(fachtitel.equals(cursor.getString(cursor.getColumnIndex(MyDatabaseHelper.KEY_FACH)))) {
-                data = cursor.getString(5);
+/*
+                DatumLerneinheit = cursor.getString(cursor.getColumnIndex(MyDatabaseHelper.KEY_START));
+                SimpleDateFormat sdf1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZ yyyy", Locale.GERMANY);
 
-                String[] time = data.split(Pattern.quote(":"));
-                datah=Integer.parseInt(time[0]);
-                datamin=Integer.parseInt(time[1]);
-                datasec=Integer.parseInt(time[2]);
+                try {
+                    DateLerneinheit = sdf1.parse(DatumLerneinheit);
 
-                gh = gh + datah;
-                gmin = gmin + datamin;
-                gsec = gsec + datasec;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if(DateLerneinheit.after(selectStartdate) && DateLerneinheit.before(selectEnddate)) {
+*/
+                    data = cursor.getString(5);
+
+                    String[] time = data.split(Pattern.quote(":"));
+                    datah = Integer.parseInt(time[0]);
+                    datamin = Integer.parseInt(time[1]);
+                    datasec = Integer.parseInt(time[2]);
+
+                    gh = gh + datah;
+                    gmin = gmin + datamin;
+                    gsec = gsec + datasec;
+//                }
             }
 
 
         }
 
         totalsec = ((gh * 60) + gmin) * 60 + gsec;
-        Gesamtzeit = (totalsec/3600)+":"+(((totalsec)/60)%60)+":"+(totalsec%60);
+
+        Long lstunden, lminuten, lsekunden;
+        String stunden, minuten, sekunden;
+
+        lstunden = totalsec/3600;
+        stunden =  String.format("%02d", lstunden);
+
+        lminuten =((totalsec)/60)%60;
+        minuten = String.format("%02d", lminuten);
+
+        lsekunden = totalsec%60;
+        sekunden = String.format("%02d", lsekunden);
+
+        Gesamtzeit = stunden+":"+minuten+":"+sekunden;
 
 
         return Gesamtzeit;
