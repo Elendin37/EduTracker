@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Statistik_Anzeige extends AppCompatActivity {
 
@@ -16,6 +18,8 @@ public class Statistik_Anzeige extends AppCompatActivity {
     TextView tvTest;
     ArrayList<String> FächerList=new ArrayList<>();
 
+    boolean alleFächer = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,26 +27,39 @@ public class Statistik_Anzeige extends AppCompatActivity {
 
         tvTest = (TextView)findViewById(R.id.tv_test);
 
+        String ausgabe = "";
 
         FächerList = getIntent().getStringArrayListExtra("ÜbergabeFächer");
         String Startdatum = getIntent().getExtras().getString("ÜbergabeStartdatum");
         String Enddatum = getIntent().getExtras().getString("ÜbergabeEnddatum");
 
-
         Integer anzahlfächer = FächerList.size();
-        String fachdaten ="";
-        String ausgabe = "";
 
-
-        for (int i = 0; i<anzahlfächer; i++ ){
-
-            //ausgabe = ausgabe + "\n" +FächerList.get(i);
-
-            ausgabe =ausgabe + "\n" + FächerList.get(i)+ ": "+ db.getFachdata(FächerList.get(i), Startdatum, Enddatum);
+        for (int i = 0; i<anzahlfächer; i++ ) {
+            if(FächerList.get(i).equals("Alle Fächer")){
+                alleFächer = true;
+            }
         }
 
+        if(alleFächer){
 
-        tvTest.setText(anzahlfächer.toString()+"\n"+ausgabe+"\n"+Startdatum+"\n"+Enddatum+"\n");
+            List<Fach> allefaecher = new LinkedList<Fach>();
+            allefaecher=db.getAllFaecher();
+
+            for (int i = 0; i<allefaecher.size(); i++ ){
+
+                ausgabe =ausgabe + "\n" + allefaecher.get(i)+ ": "+ db.getLernzeitFach(allefaecher.get(i).toString(), Startdatum, Enddatum);
+            }
+        }else if (alleFächer == false) {
+
+
+            for (int i = 0; i < anzahlfächer; i++) {
+
+                ausgabe = ausgabe + "\n" + FächerList.get(i) + ": " + db.getLernzeitFach(FächerList.get(i), Startdatum, Enddatum);
+            }
+        }
+
+        tvTest.setText(ausgabe+"\n"+Startdatum+"\n"+Enddatum+"\n");
 
 
 
