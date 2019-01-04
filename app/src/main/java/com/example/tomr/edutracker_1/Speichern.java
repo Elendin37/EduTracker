@@ -12,13 +12,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,6 +38,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.media.MediaRecorder.VideoSource.CAMERA;
 
-public class Speichern extends AppCompatActivity  {
+public class Speichern extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener{
 
     String fachname, lerndauer, notizen_string, IMAGE_DIRECTORY,currentPhotoPath, pathGallery;
     long lerndauerInMs;
@@ -52,6 +61,11 @@ public class Speichern extends AppCompatActivity  {
     //public MyDatabaseHelper(Context context, String name, CursorFactory factory, int version)
     MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
 
+    //insert this for toolbar:
+    public Toolbar toolbar;
+    private ArrayList<String> values;
+    private ArrayAdapter<String> adapter;
+
     /*For filereading. Try later...
     private String[] mFileList;
     private File mPath = new File(Environment.getExternalStorageDirectory() + "//yourdir//");
@@ -62,7 +76,28 @@ public class Speichern extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_speichern);
+        setContentView(R.layout.main_speichern);
+
+        //----------------Toolbar + Application Drawer begin --------------------------------------//
+        // initialize Toolbar: (needed for the app.Drawer)
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //initialize the Drawer:
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        //Werte für Adapter anlegen
+        values = new ArrayList<String>();
+
+        //Adapter anlegen
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, values);
+        //----------------Toolbar + Application Drawer end-----------------------------------------//
 
         //---------------------------To delete old databases----------------------------------
         // DATABASE_NAME = "LerneinheitenDB";
@@ -101,10 +136,10 @@ public class Speichern extends AppCompatActivity  {
     }
 
     //Zurückgehen nicht erlaubt
-    @Override
-    public void onBackPressed() {
-
-    }
+//    @Override
+//    public void onBackPressed() {
+//
+//    }
 
     public void onClickSave (View v) {
         switch (v.getId()) {
@@ -376,5 +411,54 @@ public class Speichern extends AppCompatActivity  {
                 "IMG_"+ timeStamp + ".jpg");
     }*/
 
+    //----------------Toolbar + Application Drawer-------------------------------------------------//
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        return super.onOptionsItemSelected(item);
+    }
 
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        if (id == R.id.nav_tracking) {
+            // Handle the camera action
+        } else if (id == R.id.nav_lerneinheiten) {
+
+        } else if (id == R.id.nav_statistik) {
+
+        } else if (id == R.id.nav_errungenschaften) {
+            Intent goals = new Intent(getApplicationContext(),MainActivityReward.class);
+            startActivity(goals);
+
+        } else if (id == R.id.nav_manage) {
+            Intent manage = new Intent(getApplicationContext(),Einstellung_Uebersicht.class);
+            startActivity(manage);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+    //----------------Toolbar + Application Drawer--------------------------------------------//
 }
