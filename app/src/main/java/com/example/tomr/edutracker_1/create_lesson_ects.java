@@ -3,9 +3,8 @@ package com.example.tomr.edutracker_1;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,12 +21,15 @@ import android.widget.CompoundButton;
 
 import java.util.ArrayList;
 
-public class create_lesson extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class create_lesson_ects extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     //declaring variables of the class:
     public String title;
-    public float zielzeit;
+    public float ects;
+    public float sws;
     public float istzeit;
+    public float zielzeit;
     private Toast errToast;
     private Toast doneToast;
     private Toast timeToast;
@@ -36,34 +38,27 @@ public class create_lesson extends AppCompatActivity implements NavigationView.O
     private EditText text1; // bufer variable
     private EditText text2; // buffer variable
     private EditText text3; // buffer variable
+    private EditText text4; // buffer variable
     private Switch simpleSwitch;
     private Context context;
     private String errormessage = "Eingabe fehlerhaft.";
     private String donemessage = "Eingabe erfolgreich.";
     private String timemessage = "Zielzeit ist kleiner als die Istzeit";
-    private String ectsmessage = "Bitte geben Sie die Lernzeit als ECTS ein";
+    private String ectsmessage = "Bitte geben Sie die Lernzeit in Stunden ein";
     private int duration = Toast.LENGTH_SHORT;
-
     //insert this for toolbar:
     public Toolbar toolbar;
     private ArrayList<String> values;
     private ArrayAdapter<String> adapter;
-
     MyDatabaseHelper db =new MyDatabaseHelper(this,null,null,0);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_create_lesson); // change this for navigation drawer
-
+        setContentView(R.layout.main_create_lesson_ects); // change this for navigation drawer
+        Intent intent = getIntent();
         context = getApplicationContext();
-        // initialize the Toast for the Errormessages:
-        errToast = Toast.makeText(context, errormessage, duration);
-        doneToast = Toast.makeText(context, donemessage, duration);
-        timeToast = Toast.makeText(context, timemessage, duration);
-        ectsToast = Toast.makeText(context, ectsmessage, duration);
-
         //----------------Toolbar + Application Drawer begin --------------------------------------//
         // initialize Toolbar: (needed for the app.Drawer)
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -85,18 +80,25 @@ public class create_lesson extends AppCompatActivity implements NavigationView.O
                 android.R.layout.simple_list_item_1, values);
         //----------------Toolbar + Application Drawer end-----------------------------------------//
 
-        //initialize the switch to change between normal hours or ECTS
+        //setContentView(R.layout.activity_create_lesson_ects);
+        context = getApplicationContext();
+        errToast = Toast.makeText(context, errormessage, duration);
+        doneToast = Toast.makeText(context, donemessage, duration);
+        timeToast = Toast.makeText(context, timemessage, duration);
+        ectsToast = Toast.makeText(context, ectsmessage, duration);
+
         simpleSwitch = (Switch)findViewById(R.id.switch1);
+        simpleSwitch.setChecked(true);
         simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 // Double someNumber = Double.parseDouble(editTextInput.getText().toString());
-                if (simpleSwitch.isChecked()){
-                    ectsToast.show(); // show toast that ects is selected
-                    // EditText mEditText= (EditText)findViewById(R.id.editTextECTS);
-                    Intent ects= new Intent(getApplicationContext(), create_lesson_ects.class);
+                if (!simpleSwitch.isChecked()){
+
+                    ectsToast.show();
+                    Intent ects= new Intent(getApplicationContext(), create_lesson.class);
                     startActivity(ects); // Start new activity on button click
-                } else if (!simpleSwitch.isChecked()) {
+                } else if (simpleSwitch.isChecked()) {
 
                 }
                 // do something, the isChecked will be
@@ -106,40 +108,50 @@ public class create_lesson extends AppCompatActivity implements NavigationView.O
 
     }
 
-    // Funktion um die Onclicks auzulesen und die Eingaben zu übernehmen:
+
     public void onClickNew(View view) {
 
         text1=(EditText)findViewById(R.id.editTextects);    // readout Zielzeit
         text2=(EditText)findViewById(R.id.editTextsws);     // readout Istzeit
-        text3=(EditText)findViewById(R.id.editTextTitel);       // readout Title
+        text3=(EditText)findViewById(R.id.editTextlearned);       // readout Title
+        text4=(EditText)findViewById(R.id.editTextTitel);       // readout Title
 
         // check if every field is filled
         if ((isEmpty(text1)==false) && (isEmpty(text2)==false) && (isEmpty(text3)==false)  ) {
-            zielzeit    = Float.valueOf(text1.getText().toString());    // write zielzeit in variable
-            istzeit     = Float.valueOf(text2.getText().toString());    // write istzeit in variable
-            title       = text3.getText().toString();                   // write title i n variable
 
-            //check if the times are correct
+
+            ects        = Float.valueOf(text1.getText().toString());    // write ects in variable
+            sws         = Float.valueOf(text2.getText().toString());    // write Semesterwochenstunden in variable
+            istzeit     = Float.valueOf(text3.getText().toString());    // write istzeit in variable
+            title       = text4.getText().toString();                   // write title i n variable
+
+            zielzeit = ectsInhours (ects,sws);
             if (isBigger(zielzeit,istzeit)==false){
                 fach        = new Fach(title, istzeit, zielzeit);           // create class instance Fach with declared variables
                 db.addFach(fach);   // add Fach to database
                 doneToast.show();// Show toast everything worked
+
                 Intent intent= new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent); // Start new activity on button click
+                //finish();   // close activity
             }
-            // if the times arent correct show toast and do nothing.
             else {
-                timeToast.show(); // show toast wrong time selected.
-                return;
+                timeToast.show();
             }
+
         }
-        // if a field is empty call do nothing and return:
         else {
             errToast.show(); // show errortoast
+            //finish(); //close Activity
             return;
         }
     }
 
+
+    private float ectsInhours(float ects, float sws) {
+        float sollzeit = (ects * 30) - (sws * 14); //add here some correction
+        return sollzeit;
+    }
     // function to test if the EditText field is empty
     // gives back true if the field is empty
     private boolean isEmpty(EditText etText) {
@@ -151,8 +163,8 @@ public class create_lesson extends AppCompatActivity implements NavigationView.O
         }
     }
 
-    // This function checks if the Zielzeit is bigger then the Istzeit so the input is correct:
     private boolean isBigger(float timeZiel, float timeIst) {
+
         if (timeZiel > timeIst){
             return false;
         }
@@ -160,6 +172,9 @@ public class create_lesson extends AppCompatActivity implements NavigationView.O
             return true;
         }
     }
+
+
+
 
     //----------------Toolbar + Application Drawer-------------------------------------------------//
     @Override
