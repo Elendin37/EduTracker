@@ -65,8 +65,8 @@ public class Speichern extends AppCompatActivity  {
         setContentView(R.layout.activity_speichern);
 
         //---------------------------To delete old databases----------------------------------
-        // DATABASE_NAME = "LerneinheitenDB";
-        //getApplicationContext().deleteDatabase("LerneinheitenDB");
+        //DATABASE_NAME = "LerneinheitenDB";
+        //getApplicationContext().deleteDatabase("EduTrackerDB");
 
 
         IMAGE_DIRECTORY = "Interner Speicher/Pictures/EduTracker";

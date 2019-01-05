@@ -39,6 +39,10 @@ public class ShowActivityRang extends AppCompatActivity {
         /*Auswertung gesamte Lernzeit und Anzeige von entsprechendem Rang mit Bild und Slogan*/
 
         Integer OutTime= extras.getInt("LernzeitInput");
+        MyDatabaseHelper db = new MyDatabaseHelper(this, null, null, 0);
+
+
+
 
         if(OutTime >=0 & OutTime<GrundschuelerTime){
             ImageView img= (ImageView) findViewById(R.id.image);
@@ -86,6 +90,18 @@ public class ShowActivityRang extends AppCompatActivity {
         Integer TC_WeLerner = extras.getInt("WeLerner");
         Integer TC_MarathonLerner = extras.getInt("MarathonLerner");
         Integer TC_PerfekteWoche = extras.getInt("PerfekteWoche");
+
+
+        db.updatestatus();
+
+        TC_Grundstein= db.getstatus().getGrundstein();
+        TC_Nachteule = db.getstatus().getNachteule();
+        TC_FrueherVogel = db.getstatus().getFrVogel();
+        TC_WeLerner = db.getstatus().getWELerner();
+        TC_MarathonLerner = db.getstatus().getMaLerner();
+        TC_PerfekteWoche = db.getstatus().getPWoche();
+
+
 
         if(TC_Grundstein==1){
             imgList[0]=R.drawable.ic_star_gold;

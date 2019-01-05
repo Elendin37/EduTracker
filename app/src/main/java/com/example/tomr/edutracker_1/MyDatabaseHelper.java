@@ -29,6 +29,7 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
     private static final String DATABASE_NAME = "EduTrackerDB";
     private static final String TABLE_LERNEINHEITEN = "lerneinheiten";
     private static final String TABLE_FAECHER = "faecher";
+    private static final String TABLE_STATUS = "status";
 
     public MyDatabaseHelper(Context context, String name, CursorFactory factory, int version){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,12 +57,25 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         // create faecher table
         db.execSQL(CREATE_FAECHER_TABLE);
 
+        String CREATE_STATUS_TABLE = "CREATE TABLE " + TABLE_STATUS +  " ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "grundstein integer, "+
+                "nachteule integer, "+
+                "fruehervogel integer, "+
+                "wochenendlerner integer, "+
+                "marathonlerner integer, "+
+                "perfektewoche integer )";
+        // create status table
+        db.execSQL(CREATE_STATUS_TABLE);
+
+
     }
 
     @Override
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion){
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LERNEINHEITEN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAECHER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATUS);
         this.onCreate(db);
     }
 //------------------------------Funktionen Lerneinheiten----------------------------
@@ -418,6 +432,85 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         String number=String.valueOf(fach.getId());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_FAECHER,KEY_ID_FACH+" = ?", new String[] { String.valueOf(fach.getId()) });
+    }
+
+
+    //------------------------------Funktionen Status ----------------------------
+    private static final String KEY_ID_STATUS = "id";
+    private static final String KEY_GRUNDSTEIN = "grundstein";
+    private static final String KEY_NACHTEULE = "nachteule";
+    private static final String KEY_FRVOGEL = "fruehervogel";
+    private static final String KEY_WELERNER = "wochenendlerner";
+    private static final String KEY_MARLERNER = "marathonlerner";
+    private static final String KEY_PWOCHE = "perfektewoche";
+    private static final String[] COLUMNS_STATUS = {KEY_ID_STATUS,KEY_GRUNDSTEIN,
+            KEY_NACHTEULE,KEY_FRVOGEL, KEY_WELERNER,KEY_MARLERNER,KEY_PWOCHE};
+
+    public void updatestatus(){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_STATUS,null);
+        if (c.moveToFirst()){
+
+            String selection = KEY_ID_STATUS+" = ?";
+            String[] selectionArgs =  { String.valueOf(1) };
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(KEY_GRUNDSTEIN, 1);
+            contentValues.put(KEY_NACHTEULE, 1);
+            contentValues.put(KEY_FRVOGEL, 1);
+            contentValues.put(KEY_WELERNER, 1);
+            contentValues.put(KEY_MARLERNER, 1);
+            contentValues.put(KEY_PWOCHE, 1);
+
+            //int i = db.update(TABLE_STATUS, contentValues, selection, selectionArgs);
+            db.update(TABLE_STATUS, contentValues, selection, selectionArgs);
+
+
+
+        }else{
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(KEY_GRUNDSTEIN, 1);
+            contentValues.put(KEY_NACHTEULE, 0);
+            contentValues.put(KEY_FRVOGEL, 1);
+            contentValues.put(KEY_WELERNER, 1);
+            contentValues.put(KEY_MARLERNER, 0);
+            contentValues.put(KEY_PWOCHE, 0);
+
+            db.insert(TABLE_STATUS,null, contentValues);
+
+
+        }
+        c.close();
+        db.close();
+
+    }
+    public Status getstatus(){
+        SQLiteDatabase db=this.getReadableDatabase();
+
+        Cursor cursor =
+                db.query(TABLE_STATUS, // select table
+                        COLUMNS_STATUS, // select columns
+                        " id = ?", // select entry by primary key
+                        new String[] { String.valueOf(1) }, // selections args
+                        null, // group by
+                        null, // having
+                        null, // order by
+                        null); // limit
+
+        if (cursor != null)
+            cursor.moveToFirst();
+        Status status=new Status();
+        status.setGrundstein(cursor.getInt(1));
+        status.setNachteule(cursor.getInt(2));
+        status.setFrVogel(cursor.getInt(3));
+        status.setWELerner(cursor.getInt(4));
+        status.setMaLerner(cursor.getInt(5));
+        status.setPWoche(cursor.getInt(6));
+
+        db.close();
+        return status;
     }
 
 }
