@@ -218,7 +218,9 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         db.delete(TABLE_LERNEINHEITEN, KEY_ID+" = ?", new String[]{String.valueOf(unit.getId())});
     }
 
-    public String getFachdata(String fachtitel, String Startdatum, String Enddatum) {
+
+    //Funktion gibt die Gesamte Lernzeit eines Fachs im angegebenen Zeitraum (DD.MM.YYYY) als String zurück (hh:mm:SS)
+    public String getLernzeitFach(String fachtitel, String Startdatum, String Enddatum) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         String Gesamtzeit="";
@@ -254,9 +256,9 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
 
         while (cursor.moveToNext()){
             if(fachtitel.equals(cursor.getString(cursor.getColumnIndex(MyDatabaseHelper.KEY_FACH)))) {
-/*
+
                 DatumLerneinheit = cursor.getString(cursor.getColumnIndex(MyDatabaseHelper.KEY_START));
-                SimpleDateFormat sdf1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZ yyyy", Locale.GERMANY);
+                SimpleDateFormat sdf1 = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZ yyyy", Locale.ENGLISH);
 
                 try {
                     DateLerneinheit = sdf1.parse(DatumLerneinheit);
@@ -266,7 +268,7 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
                 }
 
                 if(DateLerneinheit.after(selectStartdate) && DateLerneinheit.before(selectEnddate)) {
-*/
+
                     data = cursor.getString(5);
 
                     String[] time = data.split(Pattern.quote(":"));
@@ -277,7 +279,7 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
                     gh = gh + datah;
                     gmin = gmin + datamin;
                     gsec = gsec + datasec;
-//                }
+                }
             }
 
 
@@ -302,6 +304,10 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
 
         return Gesamtzeit;
     }
+
+
+
+
 
 
 
@@ -350,6 +356,7 @@ public class MyDatabaseHelper extends  SQLiteOpenHelper {
         return fach;
     }
 
+    //Funktion sucht mit Hilfe des Fachnamen (String) in der Fach-Tabell (DB) nach dem entsprechenden Fach und gibt dieses als Klasse-Fach zurück.
     public Fach getFachname(String fachname){
         SQLiteDatabase db=this.getReadableDatabase();
 

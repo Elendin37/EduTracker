@@ -45,21 +45,8 @@ public class FachLoeschenActivity extends AppCompatActivity {
 
     public void onClick_deleteBtn(View view)
     {
-/*
-        int pos =lv.getCheckedItemPosition();
 
-        if(pos > -1){
-            //adapter.remove(data.get(pos).toString());
-
-            Toast.makeText(getApplicationContext(), Fächer[pos]+" Gelöscht", Toast.LENGTH_SHORT).show();
-        }else
-        {
-            Toast.makeText(getApplicationContext(), "Bitte de.cl.edutracker_einstellungen.Fach auswählen", Toast.LENGTH_SHORT).show();
-        }
-        adapter.notifyDataSetChanged();
-*/
         int pos = lv.getCheckedItemPosition();
-
 
         if (pos>=0) {
             String Fach = lv.getItemAtPosition(pos).toString();

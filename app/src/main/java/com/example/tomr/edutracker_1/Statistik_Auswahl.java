@@ -127,6 +127,20 @@ public class Statistik_Auswahl extends AppCompatActivity {
     {
 //        Toast.makeText(this, "Button -Statistik anzeigen- gedrückt", Toast.LENGTH_SHORT).show();
 
+        if(selectedItems.size() == 0){
+            Toast.makeText(this, "Bitte mindestens ein Fach auswählen", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(tvStart.getText().equals("Startdatum eingeben")){
+            Toast.makeText(this, "Bitte Startdatum auswählen", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(tvEnd.getText().equals("Enddatum eingeben")){
+            Toast.makeText(this, "Bitte Enddatum auswählen", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         Intent StatistikAnzeigen = new Intent(this, Statistik_Anzeige.class);
         StatistikAnzeigen.putExtra("ÜbergabeStartdatum", startdatum);
         StatistikAnzeigen.putExtra("ÜbergabeEnddatum", enddatum);

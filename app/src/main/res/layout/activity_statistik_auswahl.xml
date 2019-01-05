@@ -59,7 +59,9 @@
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
-        android:text="TextView"
+        android:gravity="center_vertical"
+        android:text="Startdatum eingeben"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/b_startdatum"
         app:layout_constraintTop_toBottomOf="@+id/lv_faecher" />
 
@@ -69,7 +71,9 @@
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="96dp"
-        android:text="TextView"
+        android:gravity="center_vertical"
+        android:text="Enddatum eingeben"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/b_startdatum"
         app:layout_constraintTop_toBottomOf="@+id/lv_faecher" />
 
